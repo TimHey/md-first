@@ -64,6 +64,59 @@ Rerun P1 verbatim against the same agents and compare against the table above.
 
 ---
 
+## Cycle 1 result, 2026-09-20: the anchor tag was the whole thing
+
+Same probe, same agents, same canaries, run four times across one evening. The only variable that ever mattered was whether a link existed.
+
+| homepage | Claude | ChatGPT |
+| --- | --- | --- |
+| links to nothing | 0 of 6 | 0 of 6 |
+| links to nothing (rerun) | 0 of 6, no request issued | 0 of 6, no request issued |
+| links the listing files only | not reached, cache | not reached, cache |
+| links every page | **6 of 6** | **6 of 6** |
+
+Both agents returned every code correctly on the first attempt once the pages were linked. Nothing else changed: same paths, same content, same markdown, same canaries.
+
+### The two agents crawl nothing alike
+
+`Claude-User`, 9 requests over 18 seconds, strictly serial, roughly 2 to 3 seconds apart:
+
+```
+/  ->  /llms.txt  ->  /sitemap.xml  ->  the six pages in order
+```
+
+It read both listing files before opening a single page, noticed `llms.txt` covered only three of the six, and went to the sitemap to look for the rest. Its narration matched the log exactly.
+
+`ChatGPT-User`, 11 requests, all but the first inside the same second:
+
+```
+/  ->  [six pages + llms.txt + llms-full.txt + sitemap.xml + robots.txt, all at once]
+```
+
+No traversal. It fetched the homepage, extracted every URL on it, and pulled everything in one parallel burst. The listing files arrived alongside the pages rather than before them, so they informed nothing.
+
+One reads, then decides. The other grabs everything and sorts it out afterwards. Both landed on the same answer here, but on a large site those strategies diverge fast, and only one of them can be steered by what a listing file says.
+
+### Content type made no difference
+
+`Claude-User` sends `Accept: */*` and received `text/markdown`. `ChatGPT-User` sends `Accept: text/html` and received `text/plain`, same bytes. Both parsed the markdown correctly and both found the code. The label on the payload was irrelevant to the outcome.
+
+Arm F, the HTML twin, was found by both, same as its markdown counterpart. On this evidence format is not a discovery factor in either direction.
+
+### Both respected the robots.txt disallow
+
+Neither fetched `/x/`. Both noticed it existed, mentioned it, and left it alone. `Disallow` held.
+
+### What this says about llms.txt
+
+`llms.txt` worked, once something linked to it. Claude used it as intended: read the index, then fetch what it names.
+
+But the file at a well-known path, with nothing pointing at it, was never fetched once in three attempts. Claude explained why and the log agreed: its fetcher only accepts URLs from the user's message, a search result, or a page it has already fetched. A path the model composes from convention is refused before the request is made.
+
+So the convention holds up as an index and fails as a discovery mechanism. Publishing `llms.txt` and expecting agents to find it by convention does not work for these agents. Linking it does.
+
+---
+
 ## Change 2026-09-20, second homepage revision
 
 The homepage now links every page on the site directly, all six former arms plus the four listing files.
