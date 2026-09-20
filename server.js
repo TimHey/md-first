@@ -43,12 +43,6 @@ function canaries() {
       keys[arm.id] = `MDF-${arm.id}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
       dirty = true
     }
-    // The HTML representation carries its own code, so a transcript says which
-    // of the two an agent actually read.
-    if (!keys[`${arm.id}-html`]) {
-      keys[`${arm.id}-html`] = `MDH-${arm.id}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
-      dirty = true
-    }
   }
   if (dirty) fs.writeFileSync(KEYS, JSON.stringify(keys, null, 2) + '\n')
   return keys
@@ -104,7 +98,6 @@ function render(arm, as = 'md') {
   return fs
     .readFileSync(path.join(CONTENT, file), 'utf8')
     .replaceAll('{{canary}}', CANARY[arm.id])
-    .replaceAll('{{canary_html}}', CANARY[`${arm.id}-html`])
 }
 
 // ---------------------------------------------------------------------------
