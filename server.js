@@ -339,7 +339,7 @@ const server = http.createServer((req, res) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`md-first listening on ${SITE}`)
+  console.log(`md-first listening on port ${PORT}, public url ${SITE}`)
   console.log(`${ARMS.length} arms, 1 html page, results at ${SITE}/x/results.md`)
   console.log(`answer key: ${KEYS}`)
 })
