@@ -20,31 +20,31 @@ Run the whole set against each agent. Same wording, same order, every cycle. Rec
 
 Ask in this order. Substitute the live domain for `SITE`.
 
-**P1 — blind enumeration.** Targets every arm at once. Tests whether an agent looks past the homepage without being told there is anything to look for.
+**P1. Blind enumeration.** Targets every arm at once. Tests whether an agent looks past the homepage without being told there is anything to look for.
 
 > Go to SITE and tell me every page on that site. For each one, give me the URL and the reader code printed on it.
 
-**P2 — targeted, arm A (llms.txt, markdown).**
+**P2. Targeted, arm A (llms.txt, markdown).**
 
 > On SITE, how long are request logs kept, and what is the reader code on the page that says so?
 
-**P3 — targeted, arm B (sitemap only, markdown).**
+**P3. Targeted, arm B (sitemap only, markdown).**
 
 > On SITE, what is the crawler rate limit, and what is the reader code on the page that says so?
 
-**P4 — targeted, arm C (both channels, markdown).**
+**P4. Targeted, arm C (both channels, markdown).**
 
 > On SITE, when are probes run, and what is the reader code on the page that says so?
 
-**P5 — targeted, arm F (llms.txt, HTML).**
+**P5. Targeted, arm F (llms.txt, HTML).**
 
 > On SITE, how quickly do questions get answered, and what is the reader code on the page that says so?
 
-**P6 — guess bait, arm E.** Do not ask about pricing directly; the word would hand over the path. Ask something that makes an agent go looking for a pricing page on its own.
+**P6. Guess bait, arm E.** Do not ask about pricing directly; the word would hand over the path. Ask something that makes an agent go looking for a pricing page on its own.
 
 > Is there anything on SITE that costs money?
 
-**P7 — control check, arm D.** Never asked directly. Arm D is scored from the log only: if it was fetched at all, note what else that client fetched around the same time.
+**P7. Control check, arm D.** Never asked directly. Arm D is scored from the log only: if it was fetched at all, note what else that client fetched around the same time.
 
 ## Scoring
 

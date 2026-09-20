@@ -2,11 +2,13 @@
 
 **Can an agent find a page that nothing links to?**
 
-One HTML page at `/`. Six pages underneath it that no link on the site points at, each exposed through a different discovery channel: `llms.txt`, `sitemap.xml`, both, or nothing at all. Every request is logged. Then you ask an agent a question whose answer only exists on one of those pages, and see whether it can get there.
+One HTML page at `/`. Six pages underneath it that no link on the site points at, each exposed through a different discovery channel: `llms.txt`, `sitemap.xml`, both, or nothing at all. Every request is logged. Then you ask an agent a question whose answer only exists on one of those pages, and watch whether it can get there.
 
 Each hidden page carries a reader code that exists only on the running server, never in this repo. An agent that quotes the code fetched the page. That is the proof.
 
-No dependencies, no build step, ~260 lines of Node.
+**Status:** built, tested locally, not deployed. No domain picked, no probe cycle run yet.
+
+No dependencies, no build step, 345 lines of Node.
 
 ## Run
 
@@ -18,9 +20,9 @@ node server.js
 Node 20+. First boot writes `data/canaries.json`, which is your answer key and is gitignored.
 
 ```sh
-curl -s localhost:4321/llms.txt          # what an agent is supposed to read
+curl -s localhost:4321/llms.txt              # what an agent is supposed to read
 curl -s localhost:4321/notes/log-retention   # an arm page, with its code
-curl -s localhost:4321/x/results.md      # who has found what so far
+curl -s localhost:4321/x/results.md          # who has found what so far
 ```
 
 ## The arms
@@ -36,6 +38,17 @@ curl -s localhost:4321/x/results.md      # who has found what so far
 
 `arms.json` is the source of truth. `llms.txt`, `sitemap.xml` and `llms-full.txt` are all generated from it, so an arm cannot leak into the wrong channel by a typo.
 
+**D and E are the pair that makes a result readable.** A hit on E with none on D means the agent is guessing common paths, not reading listing files. **F is what makes a null result interpretable.** If agents find the HTML page and miss its markdown twin, the finding is about format rather than linking.
+
+## Run a cycle
+
+1. **Deploy** to a public hostname and set `SITE_URL`. Submit the sitemap to Search Console, since arm B depends on that channel existing at all.
+2. **Wait.** Let crawlers arrive on their own before probing. Traffic in the log before the first probe is the unprompted baseline.
+3. **Probe.** Work through the seven questions in [docs/probe-protocol.md](docs/probe-protocol.md), verbatim, fresh session per agent, bare domain only. Never hand over a path.
+4. **Score.** Only a correct reader code counts as found. Right facts with no code is a partial and is not evidence: it could have come from this repo.
+5. **Check the log.** `/x/results.md` shows which arms were fetched, by which agent, and which discovery file that client pulled first. An agent that answered correctly but never appears in the log is reading a cache or a third-party index, which is its own finding.
+6. **Record** the cycle in [docs/results.md](docs/results.md). That file is the permanent record; the live results page resets whenever the log is cleared.
+
 ## Layout
 
 ```
@@ -50,16 +63,20 @@ docs/               the experiment itself
 
 ## Read next
 
-- [docs/design.md](docs/design.md) — the arms, the controls, the contamination risks, what would falsify it
-- [docs/probe-protocol.md](docs/probe-protocol.md) — the seven questions, verbatim, and how to score them
-- [docs/results.md](docs/results.md) — the permanent record, empty until the first cycle
-- [docs/how-it-works.md](docs/how-it-works.md) — server mechanics
+- [docs/design.md](docs/design.md): the arms, the controls, the contamination risks, what would falsify it
+- [docs/probe-protocol.md](docs/probe-protocol.md): the seven questions, verbatim, and how to score them
+- [docs/results.md](docs/results.md): the permanent record, empty until the first cycle
+- [docs/how-it-works.md](docs/how-it-works.md): server mechanics
 
-## Two rules that matter
+## Three rules that matter
+
+Each of these looks like something worth fixing. Fixing any of them ends the experiment.
 
 **Never link this repo from the live site.** `arms.json` names every hidden path. One footer link would hand an agent the whole map.
 
 **Never put a canary in the repo.** The codes live in `data/canaries.json` on the server and nowhere else. That is the only reason a correct answer proves anything.
+
+**Leave the homepage bare.** It links to nothing and says nothing about the other pages, including `llms.txt`. Adding a nav, a page list or a hint answers the question before it is asked. Whether a hint changes agent behaviour is a good second experiment, not a change to this one.
 
 ## Deploy
 

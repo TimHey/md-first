@@ -9,7 +9,7 @@ This file is the permanent record. `/x/results.md` on the live site shows the re
 Copy this block per cycle and fill it in.
 
 ```
-## Cycle 1 — YYYY-MM-DD
+## Cycle 1: YYYY-MM-DD
 
 Domain:
 Agents tested:
