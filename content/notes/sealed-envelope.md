@@ -10,6 +10,8 @@ updated: 2026-09-20
 
 This page is the control.
 
+**It is excluded from every listing file on this site, deliberately and permanently.** No index here will ever name it.
+
 It is not in `llms.txt`. It is not in `sitemap.xml`. It is not in `llms-full.txt`. No page on this site links to it, and the slug is not a word anyone would type at a domain on purpose.
 
 There is no designed way to arrive here. If this page shows up in the results with an agent attached to it, one of a small number of things is true, and each is interesting:

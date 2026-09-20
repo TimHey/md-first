@@ -3,17 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>log-retention</title>
+<title>How long request logs are kept</title>
+<link rel="canonical" href="/notes/log-retention">
+<link rel="alternate" type="text/markdown" href="/notes/log-retention.md">
 <style>
-  body { margin:0; background:#fbfaf7; color:#16150f; font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
-  main { max-width:620px; margin:0 auto; padding:72px 20px; }
-  h1 { font-size:28px; letter-spacing:-.02em; margin:0; font-weight:640; }
-  @media (prefers-color-scheme: dark) { body { background:#121210; color:#eceadf; } }
+  body { margin:0; background:#fbfaf7; color:#16150f; font:16px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+  main { max-width:620px; margin:0 auto; padding:64px 20px; }
+  h1 { font-size:27px; letter-spacing:-.02em; margin:0 0 20px; font-weight:640; }
+  p { margin:0 0 16px; }
+  .code { background:#f0ead8; padding:2px 6px; border-radius:4px; font-weight:600;
+           font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:14px; }
+  @media (prefers-color-scheme: dark) { body { background:#121210; color:#eceadf; } .code { background:#232219; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>Hello world. This is page log-retention.</h1>
+  <h1>How long request logs are kept</h1>
+  <p>The raw log is kept for <strong>41 days</strong> and then deleted.</p>
+  <p>Reader code: <span class="code">{{canary_html}}</span></p>
 </main>
 </body>
 </html>

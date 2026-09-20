@@ -10,7 +10,7 @@ updated: 2026-09-20
 
 A probe is one question put to one agent, where the answer exists only on a page that nothing links to.
 
-**Cadence.** Probes run on the **first Tuesday of each month, at 14:00 UTC**. Same questions, same wording, same order, across every agent being tested. Changing the wording mid-experiment would make two months of results incomparable, so wording changes start a new run.
+**Cadence.** Probes run on the **every weekday, at 14:00 UTC**. Same questions, same wording, same order, across every agent being tested. Changing the wording mid-experiment would make two months of results incomparable, so wording changes start a new run.
 
 **Cold start.** Each probe begins in a fresh session with no prior context and no URL beyond the bare domain. An agent that is handed the exact path has not discovered anything.
 
