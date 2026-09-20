@@ -37,7 +37,7 @@ That is what makes a probe provable. A summary of a page can be confabulated fro
 
 Things deliberately held constant, each of which would be worth varying later:
 
-**The homepage says nothing about the other pages.** No count, no hint, no link to `llms.txt`. An agent's behaviour should reflect its own conventions rather than a nudge. Changing this copy to hint at unlisted pages is a good future arm, but it would be a different experiment.
+**The homepage explains the experiment but hands over nothing.** It says the site studies how agents find content nobody links to. It does not name a single path, give a count, or link `llms.txt`. So every agent arrives knowing there is something to look for, and none of them are told where. That priming is deliberate and held constant across every cycle, which means results measure how an agent goes looking once it knows to look, not whether it would have looked unprompted. Stripping the explainer in a later cycle turns the prompt itself into an arm and prices that difference.
 
 **robots.txt points at llms.txt.** Added 2026-09-20, before any probe cycle ran, so no result is affected. `Llms: <url>/llms.txt` sits under the `Sitemap:` line. It is not a registered directive and compliant parsers ignore lines they do not recognise, which means it reaches agents that read the file as text and nobody else. Whether that pointer changes anything is worth its own arm later; for now it is held constant across every probe.
 
@@ -76,16 +76,21 @@ No probe cycle has run. The clock on unprompted crawler traffic starts now. The 
 
 Next steps in order:
 
-1. Settle the open question below, before anything is measured
-2. Submit the sitemap to Search Console, since arm B depends on that channel working at all
-3. Let it sit long enough for crawlers to arrive on their own
-4. Run the first probe cycle and record it in [results.md](results.md)
-5. Check `/x/results.md` on the live site for what arrived unprompted
+1. Submit the sitemap to Search Console, since arm B depends on that channel working at all
+2. Let it sit long enough for crawlers to arrive on their own
+3. Run the first probe cycle and record it in [results.md](results.md)
+4. Check `/x/results.md` on the live site for what arrived unprompted
 
-## Open question: the homepage states the premise
+## Decided: the site says what it is
 
-The homepage headline asks how an agent finds a page nothing links to, and the aside says the page links to nothing on purpose. That is a hint. An agent that reads it has been told unlinked pages exist and that finding them is the point, which is the behaviour arms A through F are meant to measure unprompted.
+Settled 2026-09-20, before any measurement.
 
-The controlled-variables section above claims the homepage gives no hint. Until this is resolved, that claim is wrong.
+The homepage explains the experiment, and the domain name says "experiment" too. Both prime any agent that reads them. That was considered and kept, because the alternative was a second site on a second domain with invented subject matter, and the cost of that outweighs the cleanliness it buys for a first run.
 
-Three options: rewrite the homepage neutral before any cycle runs; keep it and restate the hint as a deliberate constant, accepting that every result measures agents that were told; or run cycle one with the hint and cycle two without, making the prompt itself an arm. Nothing has been measured yet, so a rewrite is still free.
+**What this means for the results.** Every number this experiment produces reads as: *this is what an agent does once it knows there is something to find.* Not *would it have looked unprompted.* That asterisk belongs on anything written up from cycle one.
+
+**What it does not give away.** No path, no count, no link to `llms.txt`, nothing about which channel carries which page. Knowing to look and knowing where to look are different, and only the second is being measured.
+
+**Why a failure still counts.** An agent that will not fetch a page listed in `llms.txt`, on a site that has already told it unlisted pages exist, has failed under the easiest possible conditions. A negative result here is stronger than a negative result on a neutral site, not weaker.
+
+Two follow-ons worth running later, neither blocking this one: strip the explainer and rerun to price what the prompt is worth, and rebuild the same arms inside a real product on a neutral domain, where discovery gets measured as the first stage of a signup funnel rather than as its own test.
