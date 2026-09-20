@@ -50,6 +50,20 @@ One probe, two agents, one session each. The domain was two hours old and indexe
 
 ---
 
+## Change 2026-09-20, after the cold-start probe
+
+The homepage now carries a visible link list to `/llms.txt`, `/llms-full.txt`, `/sitemap.xml` and `/robots.txt`, plus `<link rel>` tags for the first two. Before this it linked to nothing at all.
+
+This is a direct test of Finding 3. The `llms.txt` URL now arrives *inside a page the agent has already fetched*, rather than being a path the model composes from convention. If a fetch tool refuses constructed URLs but accepts page-derived ones, the same probe that failed should now succeed.
+
+**The six arm pages stay unlinked.** Only the listing files are linked. Linking the arms themselves would collapse A through F into a single condition and there would be no experiment left. The arms remain reachable only by reading a listing file and following it, which is the behaviour under test.
+
+Canaries were not rotated, so cycle 1 and this run are directly comparable.
+
+Rerun P1 verbatim against the same agents and compare against the table above.
+
+---
+
 ## Earlier template
 
 

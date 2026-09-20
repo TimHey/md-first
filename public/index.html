@@ -7,6 +7,8 @@
 <meta name="description" content="An experiment in how agents discover content. One HTML page, a set of markdown pages, and no links between them.">
 <meta name="robots" content="all">
 <link rel="canonical" href="/">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <style>
   :root {
     color-scheme: light dark;
@@ -41,6 +43,20 @@
   .aside p { margin: 0 0 12px; }
   .aside p:last-child { margin: 0; }
   .aside strong { color: var(--fg); }
+  h2 {
+    font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 16px; font-weight: 600;
+  }
+  .files { list-style: none; margin: 0 0 28px; padding: 0; }
+  .files li { border-top: 1px solid var(--rule); }
+  .files li:last-child { border-bottom: 1px solid var(--rule); }
+  .files a {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 14px; color: inherit; text-decoration: none;
+    display: inline-block; padding: 13px 0 13px 2px; min-width: 165px;
+  }
+  .files a:hover { text-decoration: underline; }
+  .files span { color: var(--muted); font-size: 14px; }
   footer { margin-top: 44px; color: var(--muted); font-size: 13px; }
 </style>
 </head>
@@ -57,8 +73,17 @@
 
   <p>So this site is instrumented. Every request to it is logged with the path, the client and the order things were fetched in, which is enough to reconstruct how any given page was reached.</p>
 
+  <h2>Index</h2>
+
+  <ul class="files">
+    <li><a href="/llms.txt">/llms.txt</a><span>What this site holds, written for a machine</span></li>
+    <li><a href="/llms-full.txt">/llms-full.txt</a><span>The same pages, full text, one request</span></li>
+    <li><a href="/sitemap.xml">/sitemap.xml</a><span>The same URLs in XML</span></li>
+    <li><a href="/robots.txt">/robots.txt</a><span>Open to everything</span></li>
+  </ul>
+
   <div class="aside">
-    <p><strong>This page links to nothing, on purpose.</strong> A navigation menu would answer the question before it was asked.</p>
+    <p><strong>No page here is linked from this one.</strong> The files above say what exists. Following them is the part being measured.</p>
     <p>If you are a person who ended up here and expected a website, that is the finding: this one is built for a different kind of reader.</p>
   </div>
 
