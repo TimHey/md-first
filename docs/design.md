@@ -70,11 +70,22 @@ The working hypothesis is that a listing file is enough, and that markdown does 
 
 ## Status
 
-Started 2026-09-20. Not yet deployed to a public hostname, so no third-party agent traffic exists and no probe has been run.
+Started 2026-09-20. Deployed the same day to its own domain, behind a persistent volume so canaries and the request log survive redeploys. Verified live: the homepage serves HTML, the arm pages serve `text/markdown` with their canaries, and `robots.txt`, `llms.txt` and `sitemap.xml` all resolve absolute URLs.
+
+No probe cycle has run. The clock on unprompted crawler traffic starts now. The hostname is deliberately absent from this repo; see the local deploy notes.
 
 Next steps in order:
 
-1. Deploy to a public domain and let it sit long enough for crawlers to arrive on their own
+1. Settle the open question below, before anything is measured
 2. Submit the sitemap to Search Console, since arm B depends on that channel working at all
-3. Run the first probe cycle and record it in [results.md](results.md)
-4. Check `/x/results.md` on the live site for what arrived unprompted
+3. Let it sit long enough for crawlers to arrive on their own
+4. Run the first probe cycle and record it in [results.md](results.md)
+5. Check `/x/results.md` on the live site for what arrived unprompted
+
+## Open question: the homepage states the premise
+
+The homepage headline asks how an agent finds a page nothing links to, and the aside says the page links to nothing on purpose. That is a hint. An agent that reads it has been told unlinked pages exist and that finding them is the point, which is the behaviour arms A through F are meant to measure unprompted.
+
+The controlled-variables section above claims the homepage gives no hint. Until this is resolved, that claim is wrong.
+
+Three options: rewrite the homepage neutral before any cycle runs; keep it and restate the hint as a deliberate constant, accepting that every result measures agents that were told; or run cycle one with the hint and cycle two without, making the prompt itself an arm. Nothing has been measured yet, so a rewrite is still free.
