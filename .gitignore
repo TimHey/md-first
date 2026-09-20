@@ -7,3 +7,9 @@ node_modules/
 # the page, which would invalidate every probe.
 data/canaries.json
 data/*.jsonl
+
+# Local ops notes and the production answer key. The live hostname stays out
+# of this repo: the repo names every arm path, so a searchable link between
+# the two would hand an agent the map during a probe.
+DEPLOY.local.md
+data/canaries.prod.json

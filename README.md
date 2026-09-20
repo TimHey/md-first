@@ -6,7 +6,9 @@ One HTML page at `/`. Six pages underneath it that no link on the site points at
 
 Each hidden page carries a reader code that exists only on the running server, never in this repo. An agent that quotes the code fetched the page. That is the proof.
 
-**Status:** built, tested locally, not deployed. No domain picked, no probe cycle run yet.
+**Status:** deployed and live on its own domain since 2026-09-20. No probe cycle run yet.
+
+The hostname is kept out of this repo on purpose. This README names every arm path, controls included, so a searchable link between the repo and the live site would let an agent read the map instead of discovering it. Deploy details are in a local, untracked `DEPLOY.local.md`.
 
 No dependencies, no build step, 345 lines of Node.
 
