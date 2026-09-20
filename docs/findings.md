@@ -125,6 +125,29 @@ So the sensitivity is to identifiers that look like they should match, not to cl
 
 **For anyone considering divergent representations:** the agent will not catch you, and that is the problem rather than the reassurance. It will repeat whichever version it happened to read, with equal confidence, to someone asking what you charge.
 
+## 13. Asked directly, both agents find contradictions, and both miss some
+
+The same six divergent pairs were put to both agents twice: once with a neutral summarise request, once asked explicitly to check whether the site contradicts itself.
+
+**Neutral: zero contradictions reported by either agent.** Both laid `$49 per month` and `nothing here costs anything` side by side as facts.
+
+**Primed: both found real conflicts, neither found all of them.**
+
+| arm | conflict | Claude | ChatGPT |
+| --- | --- | --- | --- |
+| B | 240 vs 250 req/min | missed | **found** |
+| C | monthly vs every weekday | missed | **found** |
+| E | **$49/month vs free** | **found** | **missed** |
+| F | six business days vs two hours | **found** | **found** |
+
+Claude's misses are explained: it fetched only the HTML for B and C and read stale markdown from cache, so no conflict was visible to it. ChatGPT's miss is not. It fetched both representations of `/pricing` in the same second, reported both codes correctly, and did not report that one says the product is free and the other says it costs $49 a month, while in the same answer catching a ten-requests-per-minute difference in a rate limit.
+
+**So a contradiction audit is possible but not reliable.** The most trivial divergence on the site was caught. The most commercially damaging one was not, by the agent that had both copies in hand.
+
+Claude also audited the experimental design unprompted and was right on every count: the `?r=` homepage serves different content under the same canonical, the "nothing on this site links to this page" footer is false as served, and listing the two control pages on the homepage defeats what those arms measure. Worth noting that the agent reviewing your site may report your methodology back to you more accurately than your own documentation does.
+
+Both also flagged the reader code mismatches between `llms-full.txt` and the live pages. Those were cache artefacts rather than design, but the detection was correct: identifiers that should match and do not are the thing these agents reliably notice.
+
 ## What this suggests, short of proof
 
 Discovery appears to happen at crawl time rather than question time. The crawler traversed; the live agents fetched one or two URLs and stopped. If that holds, the audience for a listing file is the indexer, not the agent standing in front of your site, and serving one does little for a question being asked right now.
