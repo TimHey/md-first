@@ -59,6 +59,31 @@ Both agents noticed `/x/` was disallowed, said so, and left it alone.
 
 GPTBot read `robots.txt` and fetched `/sitemap.xml` 48 seconds later. The `Llms:` line added directly beneath `Sitemap:` was followed by nobody, which is correct behaviour for an unregistered directive and means the pointer buys nothing.
 
+## 9. Content negotiation splits the two agents completely
+
+Every page was given two representations at one URL: the real markdown, and a title-only HTML stub saying "Hello world. This is page X." An explicit extension wins; without one the `Accept` header decides.
+
+| | Accept header | live fetches | representation served |
+| --- | --- | ---: | --- |
+| Claude | `*/*` | 3 | markdown, every time |
+| ChatGPT | `text/html,application/xhtml+xml,...` | 6 | HTML, every time |
+
+ChatGPT fetched all six pages in one second and received the stub for every one. It never requested a `.md` URL and never received a byte of markdown. Claude, following the identical links, received markdown on every fetch.
+
+**A site that serves its real content as markdown behind an `Accept` check is invisible to ChatGPT.** Its fetcher advertises itself as a browser, so it gets whatever the HTML branch returns. Test that site with `curl` and everything looks right, because `curl` sends `*/*`.
+
+ChatGPT also reported that its fetcher "would not retrieve the `.md` URLs" and that "the sitemap's XML content type was unsupported." The log shows it did fetch `/sitemap.xml` and received `application/xml`, so the file arrived and the fetcher could not use it. Two more formats that reach it and do nothing.
+
+## 10. llms-full.txt is a stale snapshot agents quote as current
+
+Canary codes were rotated between runs. In the round after a rotation, Claude returned three current codes and three that were two rotations old. The three stale ones were exactly the pages listed in `llms.txt` and `llms-full.txt`.
+
+It never fetched either file that round. It lifted those three codes out of a cached `llms-full.txt` and only went to the network for the three pages that cached copy did not cover.
+
+**A concatenated full-text file is a secondhand copy that gets cached and then reported as fact long after the pages change.** The agent gave no sign that half its answer was ninety minutes out of date, and earlier in the evening, when a fresh copy contradicted its cached one, it concluded the site was running a deliberate trap rather than that its own copy was stale.
+
+Publishing `llms-full.txt` hands agents a snapshot they will cache and quote back at you.
+
 ## What this suggests, short of proof
 
 Discovery appears to happen at crawl time rather than question time. The crawler traversed; the live agents fetched one or two URLs and stopped. If that holds, the audience for a listing file is the indexer, not the agent standing in front of your site, and serving one does little for a question being asked right now.
