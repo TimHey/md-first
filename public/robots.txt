@@ -1,13 +1,7 @@
-# md-first. An experiment in whether agents find pages that nothing links to.
-# Everything is open. There are no traps and no cloaking: a page returns the
-# same bytes to every client.
-
 User-agent: *
 Allow: /
 Disallow: /x/
 
-# Named individually. User-agent: * already covers them; being explicit
-# removes any argument about intent.
 User-agent: GPTBot
 Allow: /
 
@@ -39,8 +33,4 @@ User-agent: meta-externalagent
 Allow: /
 
 Sitemap: {{site}}/sitemap.xml
-
-# Not a registered directive. Compliant parsers ignore a line they do not
-# know, so this costs nothing, and an agent reading the file rather than
-# parsing it gets the pointer.
 Llms: {{site}}/llms.txt
