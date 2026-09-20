@@ -96,6 +96,35 @@ It never fetched either file that round. It lifted those three codes out of a ca
 
 Publishing `llms-full.txt` hands agents a snapshot they will cache and quote back at you.
 
+## 11. A 200 in your log is not proof the agent used the response
+
+ChatGPT fetched all twelve URLs, six markdown and six HTML, inside one second. Every HTML page came back with the current code. Five of the six markdown pages came back with codes from the **first** rotation of the evening, hours old, despite the live fetch.
+
+So the request reached the origin, returned 200, and the agent then reported content from a stored copy anyway. The fetch and the consumption are separate events, and only the first one appears in your logs.
+
+**Anyone measuring agent traffic is measuring requests, not reads.** A crawl hit does not mean your current content was used, and a rise in agent requests does not mean your updated page reached anyone.
+
+## 12. Agents do not spontaneously flag factual contradictions, but do flag identifier mismatches
+
+Six pages were given two representations that disagreed by degrees, from identical to a contradiction on price. Both were linked, and ChatGPT fetched both of every pair.
+
+| arm | HTML | markdown | flagged? |
+| --- | --- | --- | --- |
+| A | 41 days | 41 days | n/a, control |
+| B | 240 req/min | 250 req/min | no |
+| C | first Tuesday monthly | every weekday | no |
+| D | silent | "excluded from every listing file" | no |
+| E | **$49 per month** | **nothing here costs anything** | **no** |
+| F | **six business days** | **two hours** | **no** |
+
+It reported both sides of E and F in the same document, in adjacent sections, and treated each as a fact. Neither the price contradiction nor the twenty-fold difference in response time drew any comment.
+
+What it did flag, unprompted, was a **reader code** appearing with two different values across two sources. It raised that as "the site appears to be instrumented so that reader codes can change between representations," attributing the discrepancy to deliberate site design rather than to its own stale copy.
+
+So the sensitivity is to identifiers that look like they should match, not to claims that contradict each other. An agent will notice your version string drifted and will not notice that one of your pages says a product is free and the other says it costs $49 a month.
+
+**For anyone considering divergent representations:** the agent will not catch you, and that is the problem rather than the reassurance. It will repeat whichever version it happened to read, with equal confidence, to someone asking what you charge.
+
 ## What this suggests, short of proof
 
 Discovery appears to happen at crawl time rather than question time. The crawler traversed; the live agents fetched one or two URLs and stopped. If that holds, the audience for a listing file is the indexer, not the agent standing in front of your site, and serving one does little for a question being asked right now.
