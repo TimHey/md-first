@@ -64,6 +64,20 @@ Rerun P1 verbatim against the same agents and compare against the table above.
 
 ---
 
+## Change 2026-09-20, second homepage revision
+
+The homepage now links every page on the site directly, all six former arms plus the four listing files.
+
+**This ends the arm structure.** A through F were defined by which channel carried them and by being unlinked. With every page linked from the homepage there is one condition, not six, and no control left to distinguish discovery from guessing. Results from here answer a narrower question: given a link, does an agent follow it and report what it found.
+
+That question is worth answering, because the two runs before this one never got far enough to ask it. Both agents stopped at the homepage, one because its fetcher refuses URLs the model composes, the other apparently without trying at all.
+
+Canaries were not rotated, so a correct code still proves a real fetch and the three runs stay comparable.
+
+To restore the experiment later: remove the page links from the homepage, delete `data/canaries.json` on the volume so every arm mints a fresh code, and treat anything crawled in between as contaminated.
+
+---
+
 ## Earlier template
 
 
