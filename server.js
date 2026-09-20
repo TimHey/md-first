@@ -185,12 +185,14 @@ function resultsPage() {
     const hits = rows.filter((r) => r.arm === a.id && r.status === 200)
     const agents = [...new Set(hits.filter((h) => h.client !== 'cli' && h.client !== 'browser').map((h) => h.client))]
     const channels = a.channels.length ? a.channels.join(' + ') : 'none'
-    return `| ${a.id} | \`${a.path}\` | ${a.format} | ${channels} | ${hits.length} | ${agents.length ? agents.join(', ') : '-'} | ${hits.length ? hits[0].at.slice(0, 16).replace('T', ' ') : 'not yet'} |`
+    const md = hits.filter((h) => h.rep === 'md').length
+    const html = hits.filter((h) => h.rep === 'html').length
+    return `| ${a.id} | \`${a.path}\` | ${channels} | ${md} | ${html} | ${agents.length ? agents.join(', ') : '-'} | ${hits.length ? hits[0].at.slice(0, 16).replace('T', ' ') : 'not yet'} |`
   }).join('\n')
 
   const found = rows
     .filter((r) => r.arm && r.status === 200 && r.client !== 'cli' && r.client !== 'browser')
-    .map((r) => `| ${r.arm} | ${r.client} | ${r.at.slice(0, 16).replace('T', ' ')} | \`${attribute(r, rows)}\` |`)
+    .map((r) => `| ${r.arm} | ${r.rep || '-'} | ${r.client} | ${r.at.slice(0, 16).replace('T', ' ')} | \`${attribute(r, rows)}\` |`)
     .join('\n')
 
   const channelRows = DISCOVERY.map((p) => {
@@ -219,15 +221,15 @@ ${rows.length} requests logged since ${since}. Canary codes are deliberately not
 
 ## Arms
 
-| arm | path | format | listed in | fetches | agents | first fetch |
-| --- | --- | --- | --- | ---: | --- | --- |
+| arm | path | listed in | md reads | html reads | agents | first fetch |
+| --- | --- | --- | ---: | ---: | --- | --- |
 ${armRows}
 
 ## Every agent fetch of an arm page
 
 The "came from" column is the last discovery file that client pulled in the hour before, inferred rather than read off a referrer. Because the homepage links to nothing, a row that came from \`/\` means the agent guessed the path instead of reading a listing.
 
-${found ? `| arm | agent | at | came from |\n| --- | --- | --- | --- |\n${found}` : '_No agent has fetched an arm page yet._'}
+${found ? `| arm | read as | agent | at | came from |\n| --- | --- | --- | --- | --- |\n${found}` : '_No agent has fetched an arm page yet._'}
 
 ## Discovery files
 
@@ -299,6 +301,7 @@ const server = http.createServer((req, res) => {
       accept: accept.slice(0, 120),
       referer: (req.headers.referer || '').slice(0, 200),
       served: type.split(';')[0],
+      rep: extra['x-representation'] || null,
     })
   }
 
