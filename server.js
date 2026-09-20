@@ -280,7 +280,7 @@ const server = http.createServer((req, res) => {
   const send = (status, type, body, extra = {}, arm = null) => {
     res.writeHead(status, {
       'content-type': type,
-      'cache-control': 'public, max-age=60',
+      'cache-control': 'no-store, max-age=0, must-revalidate',
       'x-robots-tag': extra['x-robots-tag'] || 'all',
       vary: 'Accept',
       ...extra,
