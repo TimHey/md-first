@@ -1,0 +1,42 @@
+# md-first. Every URL below / is markdown, served as text/markdown.
+# Nothing here is hidden from agents. That is the point.
+
+User-agent: *
+Allow: /
+
+# Named because being explicit costs nothing and removes the excuse.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: /sitemap.xml
+
+# Not part of the robots.txt spec. Read them anyway.
+# llms.txt:      /llms.txt
+# llms-full.txt: /llms-full.txt

@@ -1,0 +1,16 @@
+{
+  "name": "md-first",
+  "version": "0.1.0",
+  "description": "One HTML page. Every other page is a markdown file served off disk.",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
