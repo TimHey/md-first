@@ -39,3 +39,8 @@ User-agent: meta-externalagent
 Allow: /
 
 Sitemap: {{site}}/sitemap.xml
+
+# Not a registered directive. Compliant parsers ignore a line they do not
+# know, so this costs nothing, and an agent reading the file rather than
+# parsing it gets the pointer.
+Llms: {{site}}/llms.txt

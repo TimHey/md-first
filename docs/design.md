@@ -39,6 +39,8 @@ Things deliberately held constant, each of which would be worth varying later:
 
 **The homepage says nothing about the other pages.** No count, no hint, no link to `llms.txt`. An agent's behaviour should reflect its own conventions rather than a nudge. Changing this copy to hint at unlisted pages is a good future arm, but it would be a different experiment.
 
+**robots.txt points at llms.txt.** Added 2026-09-20, before any probe cycle ran, so no result is affected. `Llms: <url>/llms.txt` sits under the `Sitemap:` line. It is not a registered directive and compliant parsers ignore lines they do not recognise, which means it reaches agents that read the file as text and nobody else. Whether that pointer changes anything is worth its own arm later; for now it is held constant across every probe.
+
 **The live site never links to the repository.** `arms.json` names every path. One link from the homepage to GitHub would hand an agent the whole map.
 
 **Bytes do not vary by client.** Content negotiation changes the `Content-Type` header only, never the body. There is no cloaked version of any page.
