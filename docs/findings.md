@@ -1,5 +1,16 @@
 # Findings
 
+## The short version
+
+1. **Links decide everything.** Unlinked pages were read zero times out of six, three rounds running. Linked, both agents got all six on the first try.
+2. **Markdown was never the issue.** Both agents read it fine, neither prefers it, and the HTML control behaved exactly like the markdown pages.
+3. **Serve markdown off the `Accept` header and ChatGPT never sees it.** It identifies as a browser and gets the HTML. `curl` shows you the good version, so you would not catch it.
+4. **Agents cache hard and quote stale content as fact.** A request in your log does not mean they used the response.
+5. **They do not notice contradictions unless asked.** One page said free, the other said $49 a month, and both agents reported both without comment.
+6. **You cannot trust what an agent says it did.** Every round, the transcript disagreed with the server log, always with the agent overstating.
+
+---
+
 One evening, 2026-09-20. Two agents, ChatGPT and Claude, five probe rounds against an instrumented site. Everything below is backed by server logs rather than by what the agents said they did, and that distinction turned out to be the most important thing here.
 
 ## 1. A link is the difference between nothing and everything
@@ -159,6 +170,22 @@ Discovery appears to happen at crawl time rather than question time. The crawler
 - **Whether the unlisted controls hold.** Neither was ever found, but neither has been tested in a run that reached the server.
 
 Clearing all three needs a run where the cache is useless: new slugs for every page so there is nothing to match, and fresh canaries so a stale answer is detectable.
+
+## What to do with this
+
+The useful pattern that falls out of all of it: **write the HTML to persuade a person, and serve a markdown file beside it that tells an agent how to act.** Same facts, different job. A page about an MCP connector argues to a human why it is worth using, while the markdown gives the install command, the auth scopes, the endpoints, the parameter names and the failure modes. That is not two versions of the truth, it is one set of facts in two registers, and the markdown can carry far more operational detail than the page ever should.
+
+Four rules for making it work, each one earned tonight rather than assumed.
+
+**Link the markdown explicitly.** A real anchor, next to the page, pointing at the file. Not a `rel="alternate"` on its own, not a well-known path, and above all not content negotiation. Negotiation is the trap: ChatGPT identifies as a browser, takes the HTML branch, and never learns the markdown exists. It is the one failure mode that looks correct in every test you would run yourself, because `curl` sends `*/*` and gets the good version.
+
+**Split by job, not by content.** The page gets why it matters, what it replaces, what it feels like to use. The markdown gets the exact strings. An agent asked how to connect something needs the command, not the argument for it.
+
+**Keep shared facts identical.** Anything appearing in both, version numbers, limits, prices, has to match exactly. Agents miss contradictions buried in prose and reliably catch identifiers that should match and do not. Getting flagged for a version mismatch is a careless way to lose trust.
+
+**Date the file, and keep volatile facts out of it.** Your markdown is sticky once an agent has read it. An agent fetched a page live tonight and answered from a copy hours old. Put `version:` and `updated:` at the top so a stale copy is visible as stale. Think hard before putting price or availability in there, because a cached copy gets quoted as current to whoever asks next.
+
+**Where the line sits.** Same substance in two registers is a markdown mirror and it is legitimate. The moment the markdown asserts something the page does not, it is cloaking, and the risk is not that an agent catches you. Tonight proved it usually will not. The risk is that it repeats the wrong version, confidently, to someone asking what you charge, and nobody finds out.
 
 ## Caveats
 
