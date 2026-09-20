@@ -17,7 +17,19 @@ Claude reported, and the logs confirm, that its fetch tool only opens URLs that 
 
 So `/llms.txt` sitting at its well-known path was never fetched once across three attempts. Linked from the homepage, it worked exactly as designed: Claude read it, noticed it covered only three of six pages, and went to the sitemap for the rest.
 
-**Publishing llms.txt and expecting agents to find it by convention does not work. Linking it does.**
+**Linking llms.txt works. Whether anything finds it by convention alone is unproven here, in either direction.**
+
+Scope this carefully, because an earlier draft of this document overstated it.
+
+What was observed is about **in-session agents**, the fetcher that runs when someone asks a question in a chat. That fetcher refused the constructed URL, and an unlinked `llms.txt` was never reached.
+
+**Crawlers are a different population and this experiment cannot speak to them.** They made 12 requests across five hours on a domain that was hours old. None touched `llms.txt`, which is far too little to mean anything.
+
+Counter-evidence worth taking seriously: timhey.co logs 10,390 agent visits across 22 distinct agents, and `/llms.txt` has 217 hits, against 2,288 for `/robots.txt` and 1,078 for `/sitemap.xml`. So the file is genuinely fetched at volume in the wild.
+
+That site links `/llms.txt` from its homepage `<head>` as a `rel="alternate"`, from the homepage body, and from its `/agents` page. Its `robots.txt` names only the sitemap. So those 217 hits are consistent with linked files being fetched and do not establish convention-probing either.
+
+**The open question:** does any crawler request `/llms.txt` on a domain where nothing links to it? Settling it needs an unlinked `llms.txt` on a domain crawlers already know, observed over days rather than hours. This site is now a candidate for exactly that test.
 
 ## 3. Agents cache invisibly, across sessions, and narrate fetches that never happen
 
