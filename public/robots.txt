@@ -38,4 +38,4 @@ Allow: /
 User-agent: meta-externalagent
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: {{site}}/sitemap.xml

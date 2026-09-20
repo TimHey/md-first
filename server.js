@@ -58,7 +58,7 @@ const inChannel = (c) => ARMS.filter((a) => a.channels.includes(c))
 
 function llmsTxt() {
   const listed = inChannel('llms')
-    .map((a) => `- [${a.title}](${a.path}${a.format === 'md' ? '.md' : ''}): ${a.description}`)
+    .map((a) => `- [${a.title}](${SITE}${a.path}${a.format === 'md' ? '.md' : ''}): ${a.description}`)
     .join('\n')
   return `# md-first
 
@@ -72,7 +72,7 @@ ${listed}
 
 ## Full text
 
-- [Everything above in one file](/llms-full.txt): the pages listed here, concatenated
+- [Everything above in one file](${SITE}/llms-full.txt): the pages listed here, concatenated
 `
 }
 
@@ -305,6 +305,10 @@ const server = http.createServer((req, res) => {
     return send(200, 'text/html; charset=utf-8', fs.readFileSync(path.join(PUBLIC, 'index.html')))
   }
 
+  if (pathname === '/robots.txt') {
+    const robots = fs.readFileSync(path.join(PUBLIC, 'robots.txt'), 'utf8').replaceAll('{{site}}', SITE)
+    return send(200, 'text/plain; charset=utf-8', robots)
+  }
   if (pathname === '/llms.txt') return send(200, 'text/plain; charset=utf-8', llmsTxt())
   if (pathname === '/llms-full.txt') return send(200, 'text/plain; charset=utf-8', llmsFullTxt())
   if (pathname === '/sitemap.xml') return send(200, 'application/xml; charset=utf-8', sitemapXml())
