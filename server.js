@@ -43,6 +43,12 @@ function canaries() {
       keys[arm.id] = `MDF-${arm.id}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
       dirty = true
     }
+    // The HTML representation carries its own code, so a transcript says which
+    // of the two an agent actually read.
+    if (!keys[`${arm.id}-html`]) {
+      keys[`${arm.id}-html`] = `MDH-${arm.id}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
+      dirty = true
+    }
   }
   if (dirty) fs.writeFileSync(KEYS, JSON.stringify(keys, null, 2) + '\n')
   return keys
@@ -87,15 +93,18 @@ function sitemapXml() {
 
 function llmsFullTxt() {
   const parts = inChannel('llms').map((a) => {
-    const body = render(a).replace(/^---\n[\s\S]*?\n---\n/, '').trim()
+    const body = render(a, 'md').replace(/^---\n[\s\S]*?\n---\n/, '').trim()
     return `# ${SITE}${a.path}\n\n${body}`
   })
   return `# md-first: full text\n\nThe pages listed in /llms.txt, concatenated. Pages exposed through other channels are not included.\n\nOne of these pages is HTML and appears below as its source, stylesheet and all. That is not a mistake. It gets the same treatment as its markdown counterparts on purpose, and what it costs to carry is part of what is being measured.\n\n---\n\n${parts.join('\n\n---\n\n')}\n`
 }
 
-function render(arm) {
-  const raw = fs.readFileSync(path.join(CONTENT, arm.file), 'utf8')
-  return raw.replaceAll('{{canary}}', CANARY[arm.id])
+function render(arm, as = 'md') {
+  const file = as === 'html' ? arm.html_file : arm.file
+  return fs
+    .readFileSync(path.join(CONTENT, file), 'utf8')
+    .replaceAll('{{canary}}', CANARY[arm.id])
+    .replaceAll('{{canary_html}}', CANARY[`${arm.id}-html`])
 }
 
 // ---------------------------------------------------------------------------
@@ -324,16 +333,22 @@ const server = http.createServer((req, res) => {
 
   const arm = findArm(pathname)
   if (arm) {
-    const body = render(arm)
-    const type = arm.format === 'html' ? 'text/html; charset=utf-8' : negotiate(accept, raw)
-    const ext = arm.format === 'md' ? '.md' : '.html'
+    // An explicit extension wins. With no extension the Accept header decides,
+    // so the same URL hands a browser-shaped client the HTML and everyone
+    // else the markdown. The two representations say different things on
+    // purpose: whichever code comes back names the one that was read.
+    const explicit = pathname.endsWith('.html') ? 'html' : pathname.endsWith('.md') ? 'md' : null
+    const as = explicit || (/text\/html/.test(accept) && !raw ? 'html' : 'md')
+    const body = render(arm, as)
+    const type = as === 'html' ? 'text/html; charset=utf-8' : negotiate(accept, raw)
     return send(
       200,
       type,
       body,
       {
-        link: `<${SITE}${arm.path}>; rel="canonical", <${SITE}${arm.path}${ext}>; rel="alternate"; type="${arm.format === 'md' ? 'text/markdown' : 'text/html'}"`,
-        'x-md-source': `/${arm.file}`,
+        link: `<${SITE}${arm.path}>; rel="canonical", <${SITE}${arm.path}.md>; rel="alternate"; type="text/markdown", <${SITE}${arm.path}.html>; rel="alternate"; type="text/html"`,
+        'x-md-source': `/${as === 'html' ? arm.html_file : arm.file}`,
+        'x-representation': as,
       },
       arm.id,
     )
