@@ -1,4 +1,9 @@
 node_modules/
-data/*.jsonl
 .DS_Store
 .env
+
+# The answer key and the dataset. Neither belongs in a public repo: a canary
+# code visible on GitHub could be quoted back by an agent that never fetched
+# the page, which would invalidate every probe.
+data/canaries.json
+data/*.jsonl

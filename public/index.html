@@ -3,162 +3,66 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>md-first: the last HTML page on this site</title>
-<meta name="description" content="An experiment: one HTML page for humans, every other page served as markdown. Wired into robots.txt, llms.txt and a .md hierarchy.">
+<title>md-first</title>
+<meta name="description" content="An experiment in how agents discover content. One HTML page, a set of markdown pages, and no links between them.">
+<meta name="robots" content="all">
 <link rel="canonical" href="/">
-<link rel="alternate" type="text/markdown" href="/index.md" title="This site in markdown">
-<link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #fbfaf7;
-    --fg: #16150f;
-    --muted: #6b6759;
-    --rule: #e2ded2;
-    --card: #ffffff;
-    --ink: #1f4d3f;
-    --mark: #f0ead8;
+    --bg: #fbfaf7; --fg: #16150f; --muted: #6b6759; --rule: #e2ded2; --mark: #f0ead8;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121210;
-      --fg: #eceadf;
-      --muted: #918c7c;
-      --rule: #2b2a25;
-      --card: #1a1a17;
-      --ink: #86c9ab;
-      --mark: #232219;
-    }
+    :root { --bg: #121210; --fg: #eceadf; --muted: #918c7c; --rule: #2b2a25; --mark: #232219; }
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 740px; margin: 0 auto; padding: 0 20px; }
-  code, pre, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
-
-  header { padding-block: 72px 40px; }
+  main { max-width: 620px; margin: 0 auto; padding: 96px 20px 120px; }
   .eyebrow {
-    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 20px;
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 22px;
   }
   h1 {
-    font-size: clamp(30px, 6vw, 46px); line-height: 1.12; letter-spacing: -.02em;
-    margin: 0 0 20px; font-weight: 640;
+    font-size: clamp(28px, 5.5vw, 40px); line-height: 1.15; letter-spacing: -.02em;
+    margin: 0 0 24px; font-weight: 640; max-width: 16ch;
   }
-  .lede { font-size: 18px; color: var(--muted); margin: 0; max-width: 56ch; }
+  p { margin: 0 0 18px; max-width: 60ch; }
+  .lede { font-size: 18px; color: var(--muted); }
   .lede strong { color: var(--fg); font-weight: 600; }
-
-  hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
-
-  section { padding-block: 40px; }
-  h2 {
-    font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 20px; font-weight: 600;
+  .rule { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+  .aside {
+    background: var(--mark); border-radius: 8px; padding: 18px 20px;
+    font-size: 14px; color: var(--muted); margin: 0;
   }
-  p { margin: 0 0 16px; max-width: 64ch; }
-  p:last-child { margin-bottom: 0; }
-
-  pre {
-    background: var(--card); border: 1px solid var(--rule); border-radius: 8px;
-    padding: 16px; overflow-x: auto; font-size: 13px; line-height: 1.7; margin: 0 0 16px;
-  }
-  pre .c { color: var(--muted); }
-  pre .k { color: var(--ink); }
-
-  .pages { list-style: none; margin: 0; padding: 0; }
-  .pages li { border-top: 1px solid var(--rule); }
-  .pages li:last-child { border-bottom: 1px solid var(--rule); }
-  .pages a {
-    display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap;
-    padding: 14px 4px; color: inherit; text-decoration: none;
-  }
-  .pages a:hover { background: var(--mark); }
-  .pages .slug { font-size: 14px; color: var(--ink); min-width: 190px; }
-  .pages .what { color: var(--muted); font-size: 14px; flex: 1; min-width: 200px; }
-
-  .chain { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
-  .chain div { background: var(--card); padding: 14px 16px; display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; }
-  .chain .step { font-size: 12px; color: var(--muted); min-width: 24px; }
-  .chain .f { font-size: 14px; min-width: 150px; }
-  .chain .n { font-size: 14px; color: var(--muted); flex: 1; min-width: 180px; }
-
-  footer { padding-block: 40px 80px; color: var(--muted); font-size: 14px; }
-  footer a { color: var(--ink); }
-  .note { font-size: 14px; color: var(--muted); }
+  .aside p { margin: 0 0 12px; }
+  .aside p:last-child { margin: 0; }
+  .aside strong { color: var(--fg); }
+  footer { margin-top: 44px; color: var(--muted); font-size: 13px; }
 </style>
 </head>
 <body>
+<main>
+  <p class="eyebrow">An experiment</p>
+  <h1>How does an agent find a page nothing links to?</h1>
 
-<div class="wrap">
-  <header>
-    <p class="eyebrow">An experiment</p>
-    <h1>This is the last HTML page on this site.</h1>
-    <p class="lede">Everything past the home screen is a <strong>.md</strong> file served straight off disk. No build step, no renderer, no HTML shell. Humans read it in the tab. Agents read the same bytes.</p>
-  </header>
+  <p class="lede">This is a study of content discovery. It asks a narrow question and tries to answer it with evidence rather than opinion: <strong>when no link points at a page, what does an agent actually use to find it?</strong></p>
 
-  <hr>
+  <hr class="rule">
 
-  <section>
-    <h2>The claim</h2>
-    <p>The web wraps text in HTML because 1993 browsers needed it. Agents don't. They strip the markup back off before they read anything, and the stripping is lossy and expensive.</p>
-    <p>So skip it. Write markdown, serve markdown, and see what breaks. The bet is that almost nothing does.</p>
-  </section>
+  <p>Every site publishes more than its navigation shows. Listing files have grown up around that gap, and most of them are written on faith. Nobody checks whether the agents read them.</p>
 
-  <hr>
+  <p>So this site is instrumented. Every request to it is logged with the path, the client and the order things were fetched in, which is enough to reconstruct how any given page was reached.</p>
 
-  <section>
-    <h2>Try it</h2>
-<pre><span class="c"># what an agent gets</span>
-curl -sI localhost:4321/thesis | grep -i content-type
-<span class="k">content-type: text/markdown; charset=utf-8</span>
+  <div class="aside">
+    <p><strong>This page links to nothing, on purpose.</strong> A navigation menu would answer the question before it was asked.</p>
+    <p>If you are a person who ended up here and expected a website, that is the finding: this one is built for a different kind of reader.</p>
+  </div>
 
-<span class="c"># what your browser gets, same bytes, different label</span>
-curl -sI -H 'Accept: text/html' localhost:4321/thesis | grep -i content-type
-<span class="k">content-type: text/plain; charset=utf-8</span></pre>
-    <p class="note">One byte-for-byte payload. The Content-Type flips only because browsers download <code>text/markdown</code> instead of painting it. Add <code>?raw</code> to force markdown anywhere.</p>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>The pages</h2>
-    <ul class="pages">
-      <li><a href="/thesis"><span class="slug mono">/thesis</span><span class="what">Why markup is the wrong default now</span></a></li>
-      <li><a href="/how-it-works"><span class="slug mono">/how-it-works</span><span class="what">Routing, content negotiation, headers</span></a></li>
-      <li><a href="/spec"><span class="slug mono">/spec</span><span class="what">The conventions any md-first site follows</span></a></li>
-      <li><a href="/experiment"><span class="slug mono">/experiment</span><span class="what">What's being measured and what would falsify it</span></a></li>
-      <li><a href="/stats"><span class="slug mono">/stats</span><span class="what">Live request log, generated as markdown</span></a></li>
-      <li><a href="/docs/quickstart"><span class="slug mono">/docs/quickstart</span><span class="what">Run it, then steal it</span></a></li>
-      <li><a href="/docs/content-negotiation"><span class="slug mono">/docs/content-negotiation</span><span class="what">Which clients render what</span></a></li>
-      <li><a href="/docs/discovery-chain"><span class="slug mono">/docs/discovery-chain</span><span class="what">robots.txt → llms.txt → sitemap → .md</span></a></li>
-      <li><a href="/docs/frontmatter"><span class="slug mono">/docs/frontmatter</span><span class="what">The metadata that replaces &lt;head&gt;</span></a></li>
-    </ul>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>The discovery chain</h2>
-    <div class="chain">
-      <div><span class="step mono">1</span><span class="f mono"><a href="/robots.txt" style="color:inherit">robots.txt</a></span><span class="n">Opens the door, points at the map</span></div>
-      <div><span class="step mono">2</span><span class="f mono"><a href="/llms.txt" style="color:inherit">llms.txt</a></span><span class="n">Hand-written index, every entry a .md URL</span></div>
-      <div><span class="step mono">3</span><span class="f mono"><a href="/sitemap.xml" style="color:inherit">sitemap.xml</a></span><span class="n">Same URLs for crawlers that still want XML</span></div>
-      <div><span class="step mono">4</span><span class="f mono"><a href="/llms-full.txt" style="color:inherit">llms-full.txt</a></span><span class="n">The whole site in one request</span></div>
-      <div><span class="step mono">5</span><span class="f mono">*.md</span><span class="n">The content. Nothing between it and the reader</span></div>
-    </div>
-  </section>
-
-  <hr>
-
-  <footer>
-    <p>Built to be argued with. Source: <a href="https://github.com/TimHey/md-first">github.com/TimHey/md-first</a> · This page in markdown: <a href="/index.md?raw">/index.md</a></p>
-  </footer>
-</div>
-
+  <footer>md-first · started September 2026</footer>
+</main>
 </body>
 </html>

@@ -1,0 +1,71 @@
+{
+  "note": "Single source of truth for the experiment. server.js builds llms.txt, sitemap.xml and llms-full.txt from this file, so an arm cannot leak into a channel by hand-editing mistake.",
+  "arms": [
+    {
+      "id": "A",
+      "path": "/notes/log-retention",
+      "file": "notes/log-retention.md",
+      "format": "md",
+      "channels": ["llms"],
+      "guessable": false,
+      "title": "How long request logs are kept",
+      "description": "The retention window for this experiment's raw request log, and what is stripped before anything is published.",
+      "tests": "Is llms.txt alone enough for an agent to find a page that nothing links to?"
+    },
+    {
+      "id": "B",
+      "path": "/notes/crawler-policy",
+      "file": "notes/crawler-policy.md",
+      "format": "md",
+      "channels": ["sitemap"],
+      "guessable": false,
+      "title": "Crawler policy and rate limits",
+      "description": "Which crawlers are welcome here and how fast they may go.",
+      "tests": "Does sitemap.xml alone surface a markdown page, with no llms.txt entry?"
+    },
+    {
+      "id": "C",
+      "path": "/notes/probe-schedule",
+      "file": "notes/probe-schedule.md",
+      "format": "md",
+      "channels": ["llms", "sitemap"],
+      "guessable": false,
+      "title": "When probes are run",
+      "description": "The cadence probe questions are asked on, and the rule for retiring an arm.",
+      "tests": "Does listing a page in both channels beat listing it in one?"
+    },
+    {
+      "id": "D",
+      "path": "/notes/sealed-envelope",
+      "file": "notes/sealed-envelope.md",
+      "format": "md",
+      "channels": [],
+      "guessable": false,
+      "title": "Unlisted control",
+      "description": null,
+      "tests": "Control. Listed nowhere, linked nowhere, slug not guessable. A hit here means something outside the designed channels found it."
+    },
+    {
+      "id": "E",
+      "path": "/pricing",
+      "file": "pricing.md",
+      "format": "md",
+      "channels": [],
+      "guessable": true,
+      "title": "Guessable control",
+      "description": null,
+      "tests": "Control. Listed nowhere, but the slug is one agents routinely guess. Separates path guessing from real discovery."
+    },
+    {
+      "id": "F",
+      "path": "/notes/contact-window",
+      "file": "notes/contact-window.html",
+      "format": "html",
+      "channels": ["llms"],
+      "guessable": false,
+      "title": "Response time on questions about this experiment",
+      "description": "How quickly a question sent about this experiment gets answered, and what gets answered publicly.",
+      "tests": "Format control for arm A. Identical treatment, HTML instead of markdown. If F is found and A is not, the format is the problem rather than the linking."
+    }
+  ]
+}

@@ -1,10 +1,13 @@
-# md-first. Every URL below / is markdown, served as text/markdown.
-# Nothing here is hidden from agents. That is the point.
+# md-first. An experiment in whether agents find pages that nothing links to.
+# Everything is open. There are no traps and no cloaking: a page returns the
+# same bytes to every client.
 
 User-agent: *
 Allow: /
+Disallow: /x/
 
-# Named because being explicit costs nothing and removes the excuse.
+# Named individually. User-agent: * already covers them; being explicit
+# removes any argument about intent.
 User-agent: GPTBot
 Allow: /
 
@@ -36,7 +39,3 @@ User-agent: meta-externalagent
 Allow: /
 
 Sitemap: /sitemap.xml
-
-# Not part of the robots.txt spec. Read them anyway.
-# llms.txt:      /llms.txt
-# llms-full.txt: /llms-full.txt

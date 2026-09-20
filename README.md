@@ -1,10 +1,12 @@
 # md-first
 
-An experiment: can `.md` files replace `.html` files as the pages humans read?
+**Can an agent find a page that nothing links to?**
 
-One HTML page at `/`. Every other URL returns a markdown file read straight off disk, labelled `text/markdown` for agents and `text/plain` for browsers, with the same bytes either way. Wired into `robots.txt`, `llms.txt`, `llms-full.txt` and `sitemap.xml`.
+One HTML page at `/`. Six pages underneath it that no link on the site points at, each exposed through a different discovery channel: `llms.txt`, `sitemap.xml`, both, or nothing at all. Every request is logged. Then you ask an agent a question whose answer only exists on one of those pages, and see whether it can get there.
 
-No dependencies. No build step. About 200 lines of Node.
+Each hidden page carries a reader code that exists only on the running server, never in this repo. An agent that quotes the code fetched the page. That is the proof.
+
+No dependencies, no build step, ~260 lines of Node.
 
 ## Run
 
@@ -13,46 +15,54 @@ node server.js
 # http://localhost:4321
 ```
 
-Node 20+. Nothing to install.
+Node 20+. First boot writes `data/canaries.json`, which is your answer key and is gitignored.
 
 ```sh
-curl -sI localhost:4321/thesis | grep -i content-type
-# content-type: text/markdown; charset=utf-8
-
-curl -sI -H 'Accept: text/html' localhost:4321/thesis | grep -i content-type
-# content-type: text/plain; charset=utf-8
+curl -s localhost:4321/llms.txt          # what an agent is supposed to read
+curl -s localhost:4321/notes/log-retention   # an arm page, with its code
+curl -s localhost:4321/x/results.md      # who has found what so far
 ```
 
-Same body both times. Only the label changes, because browsers download `text/markdown` instead of painting it.
+## The arms
+
+| arm | path | format | listed in | tests |
+| --- | --- | --- | --- | --- |
+| A | `/notes/log-retention` | md | llms.txt | Is llms.txt alone enough? |
+| B | `/notes/crawler-policy` | md | sitemap.xml | Is sitemap.xml alone enough? |
+| C | `/notes/probe-schedule` | md | both | Does listing twice beat listing once? |
+| D | `/notes/sealed-envelope` | md | nothing | Control. Unlisted and unguessable. |
+| E | `/pricing` | md | nothing | Control. Unlisted, but a path agents guess. |
+| F | `/notes/contact-window` | html | llms.txt | Format control for A. |
+
+`arms.json` is the source of truth. `llms.txt`, `sitemap.xml` and `llms-full.txt` are all generated from it, so an arm cannot leak into the wrong channel by a typo.
 
 ## Layout
 
 ```
-public/index.html   the one human page
-public/robots.txt   open to everything, points at the sitemap
-public/llms.txt     hand-written index, every entry a .md URL
-content/*.md        every other page
-server.js           routing, negotiation, headers, logging
+arms.json           the manifest: paths, channels, what each arm tests
+server.js           routing, generated listing files, canaries, logging
+public/index.html   the one human page. links to nothing, on purpose
+public/robots.txt   open to everything except /x/
+content/            the six arm pages, with {{canary}} placeholders
+data/               answer key and request log, both gitignored
+docs/               the experiment itself
 ```
 
-Generated at request time: `/sitemap.xml`, `/llms-full.txt`, `/stats.md`.
+## Read next
 
-## Add a page
+- [docs/design.md](docs/design.md) — the arms, the controls, the contamination risks, what would falsify it
+- [docs/probe-protocol.md](docs/probe-protocol.md) — the seven questions, verbatim, and how to score them
+- [docs/results.md](docs/results.md) — the permanent record, empty until the first cycle
+- [docs/how-it-works.md](docs/how-it-works.md) — server mechanics
 
-Drop a `.md` file in `content/`. It is live on the next request. Add it to `public/llms.txt` by hand; the sitemap and full text pick it up on their own.
+## Two rules that matter
+
+**Never link this repo from the live site.** `arms.json` names every hidden path. One footer link would hand an agent the whole map.
+
+**Never put a canary in the repo.** The codes live in `data/canaries.json` on the server and nowhere else. That is the only reason a correct answer proves anything.
 
 ## Deploy
 
-Any Node host, start command `node server.js`, listens on `PORT`. Set `SITE_URL` to the public hostname so canonical links and the sitemap are absolute.
+Any Node host. Start command `node server.js`, listens on `PORT`. Set `SITE_URL` to the public hostname so the sitemap and canonical links are absolute.
 
 On Railway: `railway up`.
-
-## The rules
-
-Written out at [/spec](content/spec.md). Ten of them, the important ones being: one HTML page, the bytes never change per reader, frontmatter ships instead of being stripped, no build step.
-
-## What is being tested
-
-Read [/experiment](content/experiment.md) for the hypothesis and what would falsify it. Short version: do agents read a markdown site more completely than an HTML one, does it cost less, and do humans tolerate it.
-
-The honest weak spots are listed in [/thesis](content/thesis.md): no design, browsers refusing `text/markdown`, search engines indexing it inconsistently, no images or forms, no client-side analytics.
