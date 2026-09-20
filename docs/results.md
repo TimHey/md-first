@@ -1,6 +1,57 @@
 # Results
 
-Nothing has been run yet. The site is not deployed, so there is no public hostname for an agent to visit.
+## Cycle 1, probe P1 only, 2026-09-20
+
+Blind enumeration ("tell me every page on that site and its reader code") put to ChatGPT and Claude, both in fresh sessions, given only the bare domain. Site had been live about two hours.
+
+**Both failed. Neither fetched a single arm page, and neither fetched `llms.txt`.**
+
+What the server log shows, separated by user agent, which turns out to be the whole point:
+
+| agent | what it is | fetched |
+| --- | --- | --- |
+| `ChatGPT-User/1.0` | acting for the user | `/` only |
+| `Claude-User/1.0` | acting for the user | `/robots.txt`, `/` |
+| `GPTBot/1.4` | OpenAI's crawler | `/`, `/sitemap.xml` |
+| `OAI-SearchBot/1.4` | OpenAI's index | `/robots.txt` |
+
+### Finding 1: the live agents barely crawl
+
+The two agents actually answering the question fetched one and two URLs respectively, then stopped. No traversal, no convention probing, no `llms.txt`. The crawler did more work than either agent.
+
+### Finding 2: the crawler follows `Sitemap:`, and nothing followed `Llms:`
+
+GPTBot read `robots.txt` and 48 seconds later fetched `/sitemap.xml`. The standard directive worked exactly as intended. The `Llms:` line sitting directly beneath it was fetched by nobody. Unregistered directives are ignored, which is what compliant parsing means, so this is the expected outcome rather than a surprise. It does mean the pointer added on 2026-09-20 buys nothing on current evidence.
+
+### Finding 3: fetch tools refuse constructed URLs
+
+Claude reported, unprompted, that it tried `/llms.txt` and its fetch tool rejected it: the tool only opens URLs that already appeared in the conversation, in a search result, or inside a page it had already fetched. Guessed paths are blocked even when conventional.
+
+That is the mechanism behind Finding 1, and it is more interesting than the result it explains. **A well-known path is not reachable if the fetcher will not accept a URL the model composed itself.** The `llms.txt` convention assumes an agent can request a path it knows about by convention. These agents cannot.
+
+Note the sharper version: Claude *did* fetch `robots.txt`, which contains the absolute `llms.txt` URL in plain text. It still did not fetch it. So either robots.txt content does not count as a page-derived source for the allowlist, or the model never extracted a URL from an unrecognised directive line.
+
+### What this implies
+
+Discovery is happening at crawl time, not at question time. The agent answering a live question works almost entirely from what is already in the index. That makes the crawler the audience, and the index the channel, which is the opposite of what a listing file read live is designed for.
+
+If that holds up, `llms.txt` only matters to the extent that a crawler fetches it and an index absorbs it. Serving it does nothing for an agent standing in front of your site right now.
+
+### Caveats
+
+One probe, two agents, one session each. The domain was two hours old and indexed nowhere, so both agents also had no search results to fall back on, which is a large part of why they were stuck. The correct rerun is after indexing, not now.
+
+### Next
+
+1. Get indexed. GPTBot has already taken `/` and `/sitemap.xml`. Arms B and C are the sitemap entries, so they are the first candidates to appear in an index.
+2. Submit the sitemap to Google Search Console and Bing Webmaster Tools to speed that up.
+3. Rerun P1 through P6 once anything is indexed. That is the real cycle 1; this was a cold-start probe.
+4. Consider an arm that tests Finding 3 directly: link `llms.txt` from the homepage with a plain anchor, so the URL arrives inside a fetched page rather than by convention, and see whether the same agents follow it.
+
+---
+
+## Earlier template
+
 
 This file is the permanent record. `/x/results.md` on the live site shows the request log in real time, but it resets whenever the log is cleared; this file does not.
 
